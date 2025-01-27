@@ -36,7 +36,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                             = new
-                            UsernamePasswordAuthenticationToken(username,
+                            UsernamePasswordAuthenticationToken(userDetails,
                             null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(userDetails);
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
@@ -44,11 +44,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new RuntimeException("Jwt token is expired: " +e.getMessage());
-        }
-        catch (Exception e){
+            throw new RuntimeException("Jwt token is expired: " + e.getMessage());
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
-            throw new RuntimeException("A general error occured: "+e.getMessage());
+            throw new RuntimeException("A general error occured: " + e.getMessage());
         }
         filterChain.doFilter(request, response);
 

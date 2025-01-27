@@ -1,5 +1,6 @@
 package com.deneme.e_commerce.security.config;
 
+import com.deneme.e_commerce.security.AuthEntryPoint;
 import com.deneme.e_commerce.security.jwt.AuthenticationFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +17,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private static final String AUTHENTICATE = "/authenticate";
-    private static final String SIGN_UP = "/register";
+    public static final String AUTHENTICATE = "/authenticate";
+    public static final String SIGN_UP = "/register";
     @Autowired
     private AuthenticationProvider authenticationProvider;
     @Autowired
     private AuthenticationFilter authenticationFilter;
 
+    @Autowired
+    private AuthEntryPoint authEntryPoint;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf().disable()
-                .authorizeHttpRequests(
-                        request -> request.requestMatchers(AUTHENTICATE, SIGN_UP)
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
+         httpSecurity.csrf().disable()
+                 .authorizeHttpRequests(
+                         request -> request.requestMatchers(AUTHENTICATE, SIGN_UP)
+                                 .permitAll()
+                                 .anyRequest()
+                                 .authenticated()).exceptionHandling().authenticationEntryPoint(authEntryPoint).and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                return httpSecurity.build();
     }
 }

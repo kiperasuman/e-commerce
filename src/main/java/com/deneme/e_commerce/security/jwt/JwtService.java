@@ -23,7 +23,6 @@ public class JwtService {
     @Value("${jwt_secret}")
     private String jwtSecret;
 
-
     public String generateToken(UserDetails userDetails){
         Map<String, Object> claims = new HashMap<>();
         claims.put("role",Role.ROLE_ADMIN);
@@ -42,7 +41,7 @@ public class JwtService {
         Claims body = Jwts.parserBuilder()
                 .setSigningKey(key())
                 .build()
-                .parseClaimsJws(jwtSecret)
+                .parseClaimsJws(token)
                 .getBody();
         return claims.apply(body);
     }
