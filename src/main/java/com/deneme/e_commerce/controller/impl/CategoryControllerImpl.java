@@ -22,7 +22,7 @@ public class CategoryControllerImpl implements ICategoryController {
         return categoryService.findCategoryById(id);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/list")
     @Override
     public List<DtoCategory> findAllCategories() {
         return categoryService.findAllCategories();
