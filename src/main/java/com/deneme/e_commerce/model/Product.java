@@ -28,6 +28,11 @@ public class Product {
     @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name = "unit_stock")
+    private Integer unitStock;
+
+
+
     public Long getId() {
         return id;
     }
@@ -74,5 +79,13 @@ public class Product {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Integer getUnitStock() {
+        return unitStock;
+    }
+
+    public void setUnitStock(Integer unitStock) {
+        this.unitStock = unitStock;
     }
 }
