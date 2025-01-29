@@ -1,5 +1,8 @@
 package com.deneme.e_commerce.dto;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class DtoCategory {
     private Long id;
     private String name;
