@@ -27,6 +27,9 @@ public class CartItem {
     @ManyToOne
     private Product product;
 
+    @ManyToOne
+    private Cart cart;
+
     public Long getId() {
         return id;
     }

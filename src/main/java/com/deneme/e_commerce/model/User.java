@@ -50,6 +50,9 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL)
+    private List<Order> orders;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
