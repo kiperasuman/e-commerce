@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DtoUser {
+
     private String username;
     private String password;
     private String email;
@@ -36,4 +37,5 @@ public class DtoUser {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }
