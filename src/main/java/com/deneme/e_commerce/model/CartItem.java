@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Entity
 @Table(name = "cart_items")
@@ -55,11 +56,12 @@ public class CartItem {
     }
 
     public BigDecimal getTotalPrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        return totalPrice;
     }
 
     public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+        BigDecimal multiply = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        this.totalPrice = multiply.setScale(2, RoundingMode.HALF_UP);
     }
 
     public Product getProduct() {
@@ -68,5 +70,13 @@ public class CartItem {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 }

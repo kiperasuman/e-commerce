@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/products")
+@RequestMapping(path = "rest/api/products")
 public class ProductControllerImpl implements IProductController {
 
    private IProductService productService;

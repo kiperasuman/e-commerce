@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("rest/api/category")
 public class CategoryControllerImpl implements ICategoryController {
 
     @Autowired

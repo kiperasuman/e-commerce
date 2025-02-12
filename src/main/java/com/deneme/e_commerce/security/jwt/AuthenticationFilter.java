@@ -29,6 +29,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = parseJwt(request);
+            System.out.println("🚀 AuthenticationFilter ÇALIŞTI! Request geldi.");
             if (token != null && jwtService.isTokenExpired(token)) {
                 String username = jwtService.getUserNameFromJwtToken(token);
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

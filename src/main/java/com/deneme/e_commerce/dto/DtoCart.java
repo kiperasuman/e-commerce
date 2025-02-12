@@ -11,7 +11,30 @@ import java.util.List;
 public class DtoCart {
 
     private Long id;
-    private DtoUser user;
+    private Long userId;
     private List<DtoCartItem> cartItems;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public List<DtoCartItem> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<DtoCartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
 }
