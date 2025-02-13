@@ -1,8 +1,6 @@
 package com.deneme.e_commerce.service.impl;
 
-import com.deneme.e_commerce.dto.AddToCartRequest;
-import com.deneme.e_commerce.dto.DtoCart;
-import com.deneme.e_commerce.dto.DtoCartItem;
+import com.deneme.e_commerce.dto.*;
 import com.deneme.e_commerce.model.Cart;
 import com.deneme.e_commerce.model.CartItem;
 import com.deneme.e_commerce.model.Product;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -113,5 +112,110 @@ public class CartServiceImpl implements ICartService {
         return dtoCartItem;
 
     }
+
+    @Override
+    public List<DtoCartItem> findAllCartItems(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isEmpty()){
+            throw new RuntimeException("Kullanıcı Bulunamadı.");
+        }
+        Optional<Cart> cart = cartRepository.findByUser(user.get());
+        if (cart.isEmpty()){
+            throw new RuntimeException("Sepet Bulunamadı.");
+        }
+        List<CartItem> cartItems = cart.get().getCartItems();
+        if (cartItems.isEmpty()){
+            throw new RuntimeException("Sepetinizde Ürün Bulunamadı.");
+        }
+        List<CartItem> allCartItem = cartItemRepository.findAll();
+        List<DtoCartItem> dtoCartItems = new ArrayList<>();
+        for (CartItem cartItem : allCartItem){
+            DtoCartItem dtoCartItem = new DtoCartItem();
+            dtoCartItem.setCartId(cartItem.getCart().getId());
+            dtoCartItem.setUnitPrice(cartItem.getPrice());
+            dtoCartItem.setQuantity(cartItem.getQuantity());
+            dtoCartItem.setTotalPrice(cartItem.getTotalPrice());
+            dtoCartItem.setProductId(cartItem.getId());
+            dtoCartItem.setProductName(cartItem.getProduct().getName());
+            dtoCartItem.setCategoryName(cartItem.getProduct().getCategory().getName());
+            dtoCartItems.add(dtoCartItem);
+        }
+        return dtoCartItems;
+    }
+
+    @Override
+    @Transactional
+    public DtoCartItem updateCartItem(AddToCartRequest addToCartRequest, String username) {
+
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isEmpty()){
+            throw new RuntimeException("Kullanıcı Bulunamadı.");
+        }
+
+        Optional<Cart> userCart = cartRepository.findByUser(user.get());
+        if (userCart.isEmpty()){
+            throw new RuntimeException("Sepet Bulunamadı.");
+        }
+        // Liste halinde tüm sepet içeriğini alır. ve id ye göre ilgili olanı getirir.
+        Optional<CartItem> cartItems = userCart.get().getCartItems()
+                .stream()
+                .filter(cartItem ->
+                        cartItem.getProduct().getId().equals(addToCartRequest.getProductId()))
+                .findFirst();
+
+        if (cartItems.isEmpty()){
+            throw new RuntimeException("Ürün Sepette Bulunamadı.");
+        }
+
+        CartItem cartItem = cartItems.get();
+        if (addToCartRequest.getQuantity()<=0){
+            userCart.get().getCartItems().remove(cartItem);
+            cartItemRepository.delete(cartItem);
+        }else{
+            cartItem.setQuantity(addToCartRequest.getQuantity());
+            cartItem.setTotalPrice(cartItem.getPrice());
+            cartItemRepository.save(cartItem);
+        }
+        DtoCartItem dtoCartItem = new DtoCartItem();
+        dtoCartItem.setCartId(userCart.get().getId());
+        dtoCartItem.setCategoryName(cartItem.getProduct().getCategory().getName());
+        dtoCartItem.setTotalPrice(cartItem.getTotalPrice());
+        dtoCartItem.setQuantity(cartItem.getQuantity());
+        dtoCartItem.setProductName(cartItem.getProduct().getName());
+        dtoCartItem.setUnitPrice(cartItem.getPrice());
+        dtoCartItem.setProductId(cartItem.getProduct().getId());
+
+        return dtoCartItem;
+    }
+
+    @Override
+    public void removeCartItem(Long productId, String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isEmpty()){
+            throw new RuntimeException("Kullanıcı Bulunamadı.");
+        }
+
+        Optional<Cart> userCart = cartRepository.findByUser(user.get());
+        if (userCart.isEmpty()){
+            throw new RuntimeException("Sepet Bulunamadı.");
+        }
+        Cart cart = userCart.get();
+        List<CartItem> cartItems = cart.getCartItems();
+        if (cartItems.isEmpty()){
+            throw new RuntimeException("Ürün Bulunamadı");
+        }
+        Optional<CartItem> optionalCartItem = cartItems.stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst();
+        if (optionalCartItem.isEmpty()) {
+            throw new RuntimeException("Sepette bu ürün bulunamadı.");
+        }
+        CartItem cartItem = optionalCartItem.get();
+        cartItems.remove(cartItem);
+        cartItemRepository.delete(cartItem);
+
+
+    }
+
 
 }

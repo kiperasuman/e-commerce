@@ -13,10 +13,12 @@ import java.math.BigDecimal;
 @Setter
 public class DtoCartItem {
 
-    private int quantity;
-    private BigDecimal unitPrice;
-    private BigDecimal totalPrice;
-    private Long productId;
     private Long cartId;
+    private Long productId;
+    private String productName;
+    private String categoryName;
+    private BigDecimal unitPrice;
+    private int quantity;
+    private BigDecimal totalPrice;
 
 }
